@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "partials/pesan.html" %}
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- TOOLBAR -->
+  <div class="flex flex-wrap items-center gap-2 mb-4">
+
+    <!-- TOMBOL TAMBAH PRODUK -->
+    <button
+      type="button"
+      onclick="document.getElementById('modal-tambah-produk').classList.remove('hidden')"
+      class="h-10 bg-green-500 hover:bg-green-600 text-white font-medium px-4 rounded"
+    >
+      + Tambah Produk
+    </button>
+
+    {% include "partials/produk/form_cari_produk.html" %}
+    {% include "partials/produk/form_cari_kategori.html" %}
+    {% include "partials/produk/form_filter_produk.html" %}
+  </div>
+
+  <!-- DAFTAR PRODUK -->
+  <div id="daftar-produk">
+    {% include "partials/produk/daftar_produk.html" %}
+  </div>
+
+</div>
+
+<!-- ================= MODAL TAMBAH PRODUK ================= -->
+<div
+  id="modal-tambah-produk"
+  class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+>
+  <div class="bg-white rounded-lg w-full max-w-lg p-6 relative">
+
+    <!-- CLOSE -->
+    <button
+      type="button"
+      onclick="document.getElementById('modal-tambah-produk').classList.add('hidden')"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+      Tambah Produk
+    </h2>
+
+    {% include "partials/produk/form_produk.html" %}
+  </div>
+</div>
+
+<!-- ================= MODAL DETAIL PRODUK ================= -->
+<div
+  id="modal-detail"
+  class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+>
+  <div class="bg-white rounded-lg w-full max-w-lg p-6 relative">
+
+    <!-- CLOSE -->
+    <button
+      type="button"
+      onclick="document.getElementById('modal-detail').classList.add('hidden')"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+    >
+      ✕
+    </button>
+
+    <!-- ISI DETAIL -->
+    <div id="modal-detail-content">
+      <p class="text-center text-gray-500">Memuat...</p>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+<div id="view-detail">
+
+  <!-- GAMBAR -->
+  {% if produk.gambar %}
+  <img
+    src="{{ url_for('static', filename='uploads/produk/' ~ produk.gambar) }}"
+    alt="{{ produk.nama }}"
+    class="w-full h-64 object-cover rounded mb-4"
+  >
+  {% else %}
+  <div class="w-full h-64 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-500">
+    Tidak ada gambar
+  </div>
+  {% endif %}
+
+  <!-- NAMA -->
+  <h2 class="text-xl font-semibold mb-1 text-gray-800">
+    {{ produk.nama }}
+  </h2>
+
+  <!-- BRAND -->
+  <p class="text-sm text-gray-600 mb-1">
+    Brand:
+    <span class="font-medium">
+      {{ produk.brand.nama if produk.brand else '-' }}
+    </span>
+  </p>
+
+  <!-- KATEGORI -->
+  <p class="text-sm text-gray-600 mb-3">
+    Kategori:
+    {% if produk.kategori_list %}
+      {% for k in produk.kategori_list %}
+        <span class="inline-block bg-gray-200 px-2 py-0.5 rounded text-xs mr-1">
+          {{ k.nama }}
+        </span>
+      {% endfor %}
+    {% else %}
+      -
+    {% endif %}
+  </p>
+
+  <!-- DESKRIPSI -->
+  <p class="text-gray-600 mb-3">
+    {{ produk.deskripsi }}
+  </p>
+
+  <!-- HARGA -->
+  <p class="font-bold text-blue-600 mb-4">
+    Rp {{ produk.harga }}
+  </p>
+
+  <!-- VARIAN -->
+  <div class="mb-4">
+    <h3 class="font-semibold mb-1 text-sm">Varian Produk</h3>
+
+    <table class="w-full text-sm border">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-1">Warna</th>
+          <th class="border px-2 py-1">Ukuran</th>
+          <th class="border px-2 py-1 w-20">Stok</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set total_stok = 0 %}
+        {% for v in varians %}
+        {% set total_stok = total_stok + v.stok %}
+        <tr>
+          <td class="border px-2 py-1">{{ v.warna }}</td>
+          <td class="border px-2 py-1">{{ v.ukuran }}</td>
+          <td class="border px-2 py-1 text-center">{{ v.stok }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOTAL STOK -->
+  <p class="font-semibold text-sm mb-4">
+    Total Stok: <span class="text-blue-600">{{ total_stok }}</span>
+  </p>
+
+  <!-- ACTION -->
+  <div class="flex justify-between gap-2">
+    <button
+      type="button"
+      onclick="document.getElementById('modal-detail').classList.add('hidden')"
+      class="h-10 px-4 rounded bg-blue-500 hover:bg-blue-600 text-white"
+    >
+      Kembali
+    </button>
+
+    <div class="flex gap-2">
+      <button
+        type="button"
+        onclick="
+          document.getElementById('view-detail').classList.add('hidden');
+          document.getElementById('view-edit').classList.remove('hidden');
+        "
+        class="h-10 px-4 rounded bg-yellow-500 hover:bg-yellow-600 text-white"
+      >
+        ✏️ Edit
+      </button>
+
+      <form
+        action="{{ url_for('main.hapus_produk', id=produk.id) }}"
+        method="post"
+        onsubmit="return confirm('Yakin hapus produk?')"
+      >
+        <button
+          type="submit"
+          class="h-10 px-4 rounded bg-red-500 hover:bg-red-600 text-white"
+        >
+          🗑️ Hapus
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- VIEW EDIT -->
+<div id="view-edit" class="hidden">
+
+  <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+    Edit Produk
+  </h2>
+
+  {% include "partials/produk/form_produk.html" %}
+
+  <div class="flex justify-between mt-4">
+    <button
+  <button
+    type="button"
+    onclick="
+        document.getElementById('view-edit').classList.add('hidden');
+        document.getElementById('view-detail').classList.remove('hidden');
+    "
+    class="h-10 px-4 rounded bg-blue-500 hover:bg-blue-600 text-white"
+    >
+    ← Kembali
+    </button>
+
+
+  </div>
+
+</div>

@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">🛒 Keranjang Belanja</h1>
+
+{% if cart and cart.items %}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      {% include "partials/pesan.html" %}
+      {% include "partials/cart/daftar_item.html" %}
+    </div>
+
+    <div>
+      {% include "partials/cart/ringkasan.html" %}
+      {% include "partials/cart/checkout_button.html" %}
+    </div>
+  </div>
+{% else %}
+  {% include "partials/cart/empty.html" %}
+{% endif %}
+{% endblock %}

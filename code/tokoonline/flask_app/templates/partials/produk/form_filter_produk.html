@@ -1,0 +1,126 @@
+{% set params = params | default({}) %}
+
+<div class="relative">
+
+  <!-- Tombol Filter -->
+  <button
+    type="button"
+    onclick="toggleFilter()"
+    class="h-10 px-4 bg-white border border-gray-300 rounded-lg
+           flex items-center gap-2 text-gray-700
+           hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+  >
+    Filter
+    <svg id="icon-filter" class="w-4 h-4 transition-transform"
+         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+         stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  <!-- Dropdown Filter -->
+  <div
+    id="filter-dropdown"
+    class="hidden absolute right-0 mt-2 w-80
+           bg-gray-50 dark:bg-gray-800
+           border dark:border-gray-700
+           rounded-lg shadow-lg p-4 z-30"
+  >
+    <form
+  id="form-filter"
+  hx-get="{{ url_for('produk.daftar_produk') }}"
+  hx-target="#daftar-produk"
+  hx-trigger="change delay:300ms, keyup delay:300ms"
+  hx-swap="innerHTML"
+  hx-push-url="true"
+  hx-include="#form-pencarian, #form-filter"
+  class="flex flex-col gap-3"
+>
+
+  <!-- BRAND -->
+  <select
+    name="brand_id"
+    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full
+           focus:outline-none focus:ring-2 focus:ring-blue-500
+           dark:bg-gray-700 dark:text-gray-100"
+  >
+    <option value="">-- Semua Brand --</option>
+    {% for brand in brand_list %}
+    <option
+      value="{{ brand.id }}"
+      {% if params.get('brand_id') == brand.id %}selected{% endif %}
+    >
+      {{ brand.nama }}
+    </option>
+    {% endfor %}
+  </select>
+
+  <!-- HARGA MIN -->
+  <input
+    type="number"
+    name="harga_min"
+    placeholder="Harga Min"
+    value="{{ params.get('harga_min', '') }}"
+    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full"
+  />
+
+  <!-- HARGA MAX -->
+  <input
+    type="number"
+    name="harga_max"
+    placeholder="Harga Max"
+    value="{{ params.get('harga_max', '') }}"
+    class="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-full"
+  />
+
+  <select name="warna">
+  <option value="">-- Semua Warna --</option>
+    {% for warna in warna_list %}
+      <option value="{{ warna }}"
+        {% if params.warna == warna %}selected{% endif %}
+      >
+        {{ warna }}
+      </option>
+    {% endfor %}
+  </select>
+
+
+  <input
+    type="text"
+    name="ukuran"
+    placeholder="Ukuran (S / 30 / 42)"
+    class="border rounded px-2 py-1"
+  />
+
+<!-- STOK -->
+<input
+  type="number"
+  name="stok_min"
+  placeholder="Stok minimal"
+  value="{{ params.get('stok_min', '') }}"
+  class="border border-gray-300 rounded px-3 py-2 w-full"
+/>
+
+</form>
+
+  </div>
+</div>
+
+<script>
+function toggleFilter() {
+  const dropdown = document.getElementById("filter-dropdown");
+  const icon = document.getElementById("icon-filter");
+
+  dropdown.classList.toggle("hidden");
+  icon.classList.toggle("rotate-180");
+}
+
+function closeFilter() {
+  const dropdown = document.getElementById("filter-dropdown");
+  const icon = document.getElementById("icon-filter");
+
+  dropdown.classList.add("hidden");
+  icon.classList.remove("rotate-180");
+}
+</script>

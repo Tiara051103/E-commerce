@@ -1,0 +1,206 @@
+<form
+  method="post"
+  enctype="multipart/form-data"
+  action="{% if produk %}
+            {{ url_for('main.detail_produk', id=produk.id) }}
+          {% else %}
+            {{ url_for('main.produk') }}
+          {% endif %}"
+  class="space-y-4"
+>
+
+<!-- ================= BASIC INFO ================= -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+  <div>
+    <label class="text-xs font-medium">Nama</label>
+    <input type="text" name="nama"
+      value="{{ produk.nama if produk else '' }}"
+      class="border rounded px-2 py-1.5 text-sm w-full" required>
+  </div>
+
+  <div>
+    <label class="text-xs font-medium">Kode Barang</label>
+    <input type="text" name="kode_barang"
+      value="{{ produk.kode_barang if produk else '' }}"
+      class="border rounded px-2 py-1.5 text-sm w-full" required>
+  </div>
+
+  <div>
+    <label class="text-xs font-medium">Harga</label>
+    <input type="number" name="harga"
+      value="{{ produk.harga if produk else '' }}"
+      class="border rounded px-2 py-1.5 text-sm w-full" required>
+  </div>
+
+  <div>
+    <label class="text-xs font-medium">Deskripsi</label>
+    <input type="text" name="deskripsi"
+      value="{{ produk.deskripsi if produk else '' }}"
+      class="border rounded px-2 py-1.5 text-sm w-full" required>
+  </div>
+
+</div>
+
+<!-- ================= BRAND & KATEGORI ================= -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+  <div>
+    <label class="text-xs font-medium">Brand</label>
+    <select name="brand_id"
+      class="border rounded px-2 py-1.5 text-sm w-full">
+      <option value="">-- Pilih brand --</option>
+      {% for brand in brand_list %}
+      <option value="{{ brand.id }}"
+        {% if produk and produk.brand_id == brand.id %}selected{% endif %}>
+        {{ brand.nama }}
+      </option>
+      {% endfor %}
+    </select>
+    <input type="text" name="brand_baru"
+      placeholder="Brand baru"
+      class="border rounded px-2 py-1.5 text-sm w-full mt-1">
+  </div>
+
+  <div>
+    <label class="text-xs font-medium">Kategori</label>
+    <select name="kategori_ids"
+      class="border rounded px-2 py-1.5 text-sm w-full">
+      <option value="">-- Pilih kategori --</option>
+      {% for kategori in kategori_list %}
+      <option value="{{ kategori.id }}">
+        {{ kategori.nama }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <input type="text" name="kategori_baru"
+      placeholder="Kategori baru"
+      class="border rounded px-2 py-1.5 text-sm w-full mt-1">
+  </div>
+
+</div>
+
+<!-- ================= VARIAN TABLE ================= -->
+<div>
+  <label class="text-xs font-medium">Varian Produk</label>
+
+  <table class="w-full border text-sm mt-1">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="border px-2 py-1">Warna</th>
+        <th class="border px-2 py-1">Ukuran</th>
+        <th class="border px-2 py-1 w-20">Stok</th>
+        <th class="border px-2 py-1 w-10">✕</th>
+      </tr>
+    </thead>
+
+    <tbody id="varian-wrapper">
+    {% if varians %}
+      {% for v in varians %}
+      <tr>
+        <td class="border">
+          <input name="warna[]" value="{{ v.warna }}"
+            class="w-full px-2 py-1 outline-none">
+        </td>
+        <td class="border">
+          <input name="ukuran[]" value="{{ v.ukuran }}"
+            class="w-full px-2 py-1 outline-none">
+        </td>
+        <td class="border">
+          <input name="stok[]" type="number" value="{{ v.stok }}"
+            class="w-full px-2 py-1 stok-input"
+            oninput="hitungStokTotal()">
+        </td>
+        <td class="border text-center">
+          <button type="button"
+            onclick="hapusBaris(this)"
+            class="text-red-600 text-sm">✕</button>
+        </td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td class="border"><input name="warna[]" class="w-full px-2 py-1"></td>
+        <td class="border"><input name="ukuran[]" class="w-full px-2 py-1"></td>
+        <td class="border">
+          <input name="stok[]" type="number"
+            class="w-full px-2 py-1 stok-input"
+            oninput="hitungStokTotal()">
+        </td>
+        <td class="border text-center"></td>
+      </tr>
+    {% endif %}
+    </tbody>
+
+  </table>
+
+  <button type="button"
+    onclick="tambahVarian()"
+    class="text-xs text-blue-600 mt-1">
+    + Tambah varian
+  </button>
+</div>
+
+<!-- ================= TOTAL STOK ================= -->
+<div>
+  <label class="text-xs font-medium">Total Stok</label>
+  <input type="number" id="stok-total" readonly
+    class="border rounded px-2 py-1.5 text-sm w-32 bg-gray-100">
+</div>
+
+<!-- ================= GAMBAR ================= -->
+<div>
+  <label class="text-xs font-medium">Gambar Produk</label>
+  <input type="file" name="gambar"
+    class="border rounded px-2 py-1.5 text-sm w-full">
+
+  {% if produk and produk.gambar %}
+  <img src="{{ url_for('static', filename='uploads/produk/' ~ produk.gambar) }}"
+    class="h-20 mt-1 rounded border">
+  {% endif %}
+</div>
+
+<button type="submit"
+  class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-1.5 rounded text-sm">
+  Simpan
+</button>
+
+</form>
+
+<!-- ================= JS ================= -->
+<script>
+function tambahVarian() {
+  document.getElementById("varian-wrapper")
+  .insertAdjacentHTML("beforeend", `
+    <tr>
+      <td class="border"><input name="warna[]" class="w-full px-2 py-1"></td>
+      <td class="border"><input name="ukuran[]" class="w-full px-2 py-1"></td>
+      <td class="border">
+        <input name="stok[]" type="number"
+          class="w-full px-2 py-1 stok-input"
+          oninput="hitungStokTotal()">
+      </td>
+      <td class="border text-center">
+        <button type="button" onclick="hapusBaris(this)"
+          class="text-red-600 text-sm">✕</button>
+      </td>
+    </tr>
+  `)
+}
+
+function hapusBaris(btn) {
+  btn.closest("tr").remove()
+  hitungStokTotal()
+}
+document.addEventListener("DOMContentLoaded", () => {
+  hitungStokTotal()
+})
+function hitungStokTotal() {
+  let total = 0
+  document.querySelectorAll(".stok-input").forEach(el => {
+    total += parseInt(el.value) || 0
+  })
+  document.getElementById("stok-total").value = total
+}
+</script>
