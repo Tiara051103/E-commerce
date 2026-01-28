@@ -1,0 +1,21 @@
+<form
+  hx-get="{{ url_for('produk.daftar_produk') }}"
+  hx-target="#daftar-produk"
+  hx-trigger="change"
+  class="flex"
+>
+  <select
+    name="kategori_id"
+    class="h-10 border rounded px-3 text-sm"
+  >
+    <option value="">📂 Semua Kategori</option>
+    {% for kategori in kategori_list %}
+      <option
+        value="{{ kategori.id }}"
+        {% if params.kategori_id == kategori.id %}selected{% endif %}
+      >
+        {{ kategori.nama }}
+      </option>
+    {% endfor %}
+  </select>
+</form>

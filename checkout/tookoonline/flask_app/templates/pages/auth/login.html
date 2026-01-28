@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<h1>Login</h1>
+{% include "partials/pesan.html" %}
+<form action="{{ url_for('auth.login') }}" method="post">
+    <input type="text" name="username" placeholder="username" required>
+    <input type="password" name="password" placeholder="password" required>
+    <button type="submit">login</button>
+</form>
+<a href="{{ url_for('auth.register') }}">belum punya akun</a>
+{% endblock %}

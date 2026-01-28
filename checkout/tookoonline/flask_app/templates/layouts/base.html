@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myapp</title>
+
+    <!-- HTMX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js"></script>
+
+    <!-- Tailwind Play CDN (WAJIB) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    {% include "partials/navbar.html" %}
+    <section class="bg-gray-50 border-b">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+        Toko Online Modern & Terpercaya
+        </h1>
+        <p class="mt-1 text-lg font-medium text-gray-700">
+        🛒 Solusi Belanja Online Praktis & Aman
+        </p>
+    </div>
+    </section>
+
+
+    {% block content %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

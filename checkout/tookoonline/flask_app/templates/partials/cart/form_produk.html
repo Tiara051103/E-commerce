@@ -1,0 +1,19 @@
+<form action="" method="post">
+    <div>
+        <label for="nama">Nama</label>
+        <input type="text" name="nama" id="nama" value="{{ produk.nama if produk}}">
+    </div>
+    <div>
+        <label for="deskripsi">Deskripsi</label>
+        <input type="text" name="deskripsi" id="deskripsi" value="{{ produk.deskripsi if produk}}">
+    </div>
+    <div>
+        <label for="harga">Harga</label>
+        <input type="number" name="harga" id="harga" value="{{ produk.harga if produk}}">
+    </div>
+    <div>
+        <label for="kode_barang">Kode Barang</label>
+        <input type="text" name="kode_barang" id="kode_barang" value="{{ produk.kode_barang if produk}}">
+    </div>
+    <button type="submit">Simpan</button>
+</form>
