@@ -1,0 +1,27 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-wrapper" class="flex flex-col gap-2 mb-4 max-w-md">
+      {% for category, message in messages %}
+        <div
+          class="flash-message px-4 py-2 rounded-lg text-sm border transition-opacity duration-500
+          {% if category == 'success' %}
+            bg-blue-50 text-blue-700 border-blue-200
+          {% elif category == 'error' %}
+            bg-red-50 text-red-700 border-red-200
+          {% else %}
+            bg-gray-50 text-gray-700 border-gray-200
+          {% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<script>
+  setTimeout(() => {
+    document.querySelectorAll(".flash-message").forEach(el => {
+      el.classList.add("opacity-0");
+      setTimeout(() => el.remove(), 500);
+    });
+  }, 3000);
+</script>

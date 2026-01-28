@@ -1,0 +1,41 @@
+<nav class="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 shadow-md">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+    <!-- Brand -->
+    <div class="text-2xl font-bold text-white tracking-wide">
+      Toko Online
+    </div>
+
+    <!-- Menu -->
+    <div class="flex items-center gap-8 text-base font-medium">
+      <a href="{{ url_for('main.index') }}"
+         class="text-white/90 hover:text-white transition">
+        Beranda
+      </a>
+
+      <a href="{{ url_for('produk.daftar_produk') }}"
+         class="text-white/90 hover:text-white transition">
+        Produk
+      </a>
+
+      <!-- Keranjang -->
+      <a href="{{ url_for('cart.lihat_cart') }}"
+         class="relative text-white/90 hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7.5M17 13l1.5 7.5M6 21h12"/>
+        </svg>
+
+        <!-- Badge jumlah item -->
+        {% if session.get('cart_total_items') and session['cart_total_items'] > 0 %}
+        <span class="absolute -top-2 -right-2 bg-rose-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+            {{ session['cart_total_items'] }}
+        </span>
+        {% endif %}
+      </a>
+
+    </div>
+
+  </div>
+</nav>
