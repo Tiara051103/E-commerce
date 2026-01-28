@@ -1,0 +1,18 @@
+<form
+  id="form-pencarian"
+  hx-get="{{ url_for('produk.daftar_produk') }}"
+  hx-target="#daftar-produk"
+  hx-swap="innerHTML"
+  hx-include="#form-filter"
+  class="flex items-center gap-2 h-10"
+>
+  <input
+    type="text"
+    name="nama"
+    placeholder="Cari produk..."
+    class="h-10 border rounded px-3"
+  >
+  <button class="h-10 bg-blue-500 text-white px-4 rounded">
+    Cari
+  </button>
+</form>

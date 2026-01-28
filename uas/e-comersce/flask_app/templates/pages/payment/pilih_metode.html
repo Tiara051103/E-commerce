@@ -1,0 +1,55 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow p-6">
+
+  <h2 class="text-xl font-semibold mb-4">
+    Pilih Metode Pembayaran
+  </h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, msg in messages %}
+      <div class="mb-3 p-3 rounded
+        {% if category == 'error' %}
+          bg-red-100 text-red-700
+        {% else %}
+          bg-emerald-100 text-emerald-700
+        {% endif %}">
+        {{ msg }}
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST" class="space-y-4">
+
+    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="TRANSFER" required>
+      <span>🏦 Transfer Bank</span>
+    </label>
+
+    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="EWALLET">
+      <span>📱 E-Wallet</span>
+    </label>
+
+    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="COD">
+      <span>🚚 Bayar di Tempat (COD)</span>
+    </label>
+
+    <div class="flex justify-between mt-6">
+      <a href="{{ url_for('checkout.review_checkout', checkout_id=checkout.id) }}">
+        Kembali
+      </a>
+
+      <button type="submit"
+              class="px-6 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+        Lanjutkan Pembayaran
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}

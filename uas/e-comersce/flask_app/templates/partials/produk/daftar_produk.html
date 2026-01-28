@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Produk</title>
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+  <!-- TAILWIND (kalau sudah ada, boleh hapus) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .cart-bounce {
+      animation: bounce 0.4s ease;
+    }
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.3); }
+      60% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+
+
+<!-- ================= GRID PRODUK ================= -->
+<div class="p-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    {% if daftar_produk %}
+      {% for produk in daftar_produk %}
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col">
+
+        <!-- GAMBAR -->
+        {% if produk.gambar %}
+        <img
+          src="{{ url_for('static', filename='uploads/produk/' ~ produk.gambar) }}"
+          class="h-40 w-full object-cover rounded mb-3"
+        >
+        {% else %}
+        <div class="h-40 w-full bg-gray-100 flex items-center justify-center rounded mb-3 text-gray-400">
+          Tidak ada gambar
+        </div>
+        {% endif %}
+
+        <h3 class="text-lg font-semibold mb-1">{{ produk.nama }}</h3>
+
+        <p class="text-gray-600 text-sm mb-2 line-clamp-2">
+          {{ produk.deskripsi }}
+        </p>
+
+        <p class="text-blue-600 font-bold mb-4">
+          Rp {{ produk.harga }}
+        </p>
+
+        <div class="mt-auto flex gap-2">
+
+          <!-- DETAIL -->
+          <button
+            hx-get="{{ url_for('main.detail_produk', id=produk.id) }}"
+            hx-target="#modal-detail-content"
+            hx-swap="innerHTML"
+            onclick="document.getElementById('modal-detail').classList.remove('hidden')"
+            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+          >
+            Detail
+          </button>
+
+          <!-- ADD TO CART -->
+          <form
+            hx-post="{{ url_for('cart.tambah_item_cart') }}"
+            hx-swap="none"
+            hx-on::after-request="cartAdded()"
+            class="flex-1"
+          >
+            <input type="hidden" name="id_produk" value="{{ produk.id }}">
+            <input type="hidden" name="nama_produk" value="{{ produk.nama }}">
+            <input type="hidden" name="harga" value="{{ produk.harga }}">
+            <input type="hidden" name="gambar" value="{{ produk.gambar }}">
+            <input type="hidden" name="jumlah" value="1">
+
+            <button
+              type="submit"
+              class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+            >
+              🛒
+            </button>
+          </form>
+
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="col-span-full text-center text-gray-500">
+        Tidak ada produk
+      </p>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- ================= TOAST ================= -->
+<div
+  id="toast-cart"
+  class="fixed bottom-6 right-6 bg-green-600 text-white px-5 py-3 rounded shadow
+         opacity-0 translate-y-4 transition-all duration-300 z-50"
+>
+  ✅ Produk ditambahkan ke cart
+</div>
+
+<!-- ================= MODAL DETAIL ================= -->
+<div
+  id="modal-detail"
+  class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+>
+  <div class="bg-white w-full max-w-xl rounded p-5 relative">
+    <button
+      onclick="document.getElementById('modal-detail').classList.add('hidden')"
+      class="absolute top-2 right-2 text-gray-500"
+    >✕</button>
+
+    <div id="modal-detail-content"></div>
+  </div>
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+function cartAdded() {
+  // TOAST
+  const toast = document.getElementById("toast-cart")
+  toast.classList.remove("opacity-0", "translate-y-4")
+
+  setTimeout(() => {
+    toast.classList.add("opacity-0", "translate-y-4")
+  }, 1500)
+
+  // CART COUNT
+  const count = document.getElementById("cart-count")
+  count.innerText = parseInt(count.innerText) + 1
+
+  // ANIMASI
+  count.classList.add("cart-bounce")
+  setTimeout(() => count.classList.remove("cart-bounce"), 400)
+}
+</script>
+
+</body>
+</html>

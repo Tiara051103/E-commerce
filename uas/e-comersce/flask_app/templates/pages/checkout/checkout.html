@@ -1,0 +1,121 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "partials/pesan.html" %}
+
+<h1 class="text-2xl font-bold mb-6">Checkout</h1>
+
+<form id="checkoutForm" method="POST" action="{{ url_for('checkout.buat_checkout') }}">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- ================= PRODUK ================= -->
+    <div class="md:col-span-2 space-y-4">
+      {% for item in items %}
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow p-4 flex justify-between items-center">
+        <div>
+          <h3 class="font-semibold">{{ item.nama_produk }}</h3>
+          <p class="text-sm text-slate-500">
+            {{ item.jumlah }} × Rp {{ "{:,}".format(item.harga_satuan) }}
+          </p>
+        </div>
+        <div class="font-bold">
+          Rp {{ "{:,}".format(item.harga_satuan * item.jumlah) }}
+        </div>
+
+        <!-- 🔥 HARUS ID CART ITEM -->
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+      </div>
+      {% endfor %}
+
+      <!-- ================= METODE PEMBAYARAN ================= -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow p-5 mt-6">
+        <h2 class="font-semibold text-lg mb-4">Metode Pembayaran</h2>
+
+        <!-- TRANSFER BANK -->
+        <div class="border rounded-lg mb-3">
+          <label class="flex items-center p-4 cursor-pointer gap-3">
+            <input type="radio" name="metode" value="TRANSFER" onclick="showBank()">
+            <span class="font-medium">🏦 Transfer Bank</span>
+          </label>
+
+          <div id="bank-list" class="hidden px-6 pb-4 space-y-2">
+            <label class="flex items-center gap-2">
+              <input type="radio" name="bank" value="BCA">
+              <span>BCA Virtual Account</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="bank" value="BRI">
+              <span>BRI Virtual Account</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="bank" value="MANDIRI">
+              <span>Mandiri Virtual Account</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- E-WALLET -->
+        <label class="flex items-center p-4 border rounded-lg mb-3 gap-3 cursor-pointer">
+          <input type="radio" name="metode" value="EWALLET" onclick="hideBank()">
+          <span class="font-medium">📱 E-Wallet (OVO / DANA / ShopeePay)</span>
+        </label>
+
+        <!-- COD -->
+        <label class="flex items-center p-4 border rounded-lg gap-3 cursor-pointer">
+          <input type="radio" name="metode" value="COD" onclick="hideBank()">
+          <span class="font-medium">🚚 Bayar di Tempat (COD)</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ================= RINGKASAN ================= -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow p-5 h-fit">
+      <h2 class="font-semibold text-lg mb-4">Ringkasan Belanja</h2>
+
+      <div class="flex justify-between mb-2">
+        <span>Total</span>
+        <span class="font-bold">
+          Rp {{ "{:,}".format(total_harga) }}
+        </span>
+      </div>
+
+      <button type="submit"
+        class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">
+        Bayar Sekarang
+      </button>
+
+      <a href="{{ url_for('cart.lihat_cart') }}"
+         class="block mt-4 text-center text-sm text-emerald-600 hover:underline">
+        ← Kembali ke Keranjang
+      </a>
+    </div>
+  </div>
+</form>
+
+<script>
+function showBank() {
+  document.getElementById("bank-list").classList.remove("hidden");
+}
+function hideBank() {
+  document.getElementById("bank-list").classList.add("hidden");
+}
+
+document.getElementById("checkoutForm").addEventListener("submit", function(e){
+  const metode = document.querySelector('input[name="metode"]:checked');
+  if(!metode){
+    alert("Pilih metode pembayaran terlebih dahulu!");
+    e.preventDefault();
+    return;
+  }
+
+  if(metode.value === "TRANSFER"){
+    const bank = document.querySelector('input[name="bank"]:checked');
+    if(!bank){
+      alert("Pilih bank tujuan transfer terlebih dahulu!");
+      e.preventDefault();
+      return;
+    }
+  }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "partials/pesan.html" %}
+<h1 class="text-2xl font-bold mb-6">✅ Checkout Berhasil</h1>
+
+<div class="max-w-3xl mx-auto space-y-4">
+
+  <div class="bg-white dark:bg-slate-800 rounded-xl shadow p-5">
+    <h2 class="font-semibold text-lg mb-4">Ringkasan Checkout</h2>
+
+    {% for item in checkout.items %}
+    <div class="flex justify-between items-center mb-2">
+      <div>
+        {{ item.nama_produk }} × {{ item.jumlah }}
+      </div>
+      <div>
+        Rp {{ "{:,}".format(item.subtotal) }}
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="flex justify-between font-bold mt-4 border-t pt-2">
+      <span>Total</span>
+      <span>Rp {{ "{:,}".format(checkout.total_harga) }}</span>
+    </div>
+  </div>
+
+  <a href="{{ url_for('produk.daftar_produk') }}"
+     class="block mt-4 w-full text-center bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-semibold">
+    Kembali ke Belanja
+  </a>
+</div>
+{% endblock %}

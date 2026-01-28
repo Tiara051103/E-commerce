@@ -1,0 +1,52 @@
+<div class="bg-white dark:bg-slate-800 rounded-xl shadow p-5">
+  <h2 class="text-lg font-semibold mb-4">Metode Pembayaran</h2>
+
+  <!-- ===== METODE ===== -->
+  <div class="space-y-3">
+    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="TRANSFER" class="metode-radio">
+      🏦 Transfer Bank
+    </label>
+
+    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="EWALLET" class="metode-radio">
+      📱 E-Wallet
+    </label>
+
+    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer">
+      <input type="radio" name="metode" value="COD" class="metode-radio">
+      🚚 Bayar di Tempat (COD)
+    </label>
+  </div>
+
+  <!-- ===== PILIH BANK ===== -->
+  <div id="bank-box" class="mt-5 hidden">
+    <h3 class="font-semibold mb-2">Pilih Bank</h3>
+
+    <div class="space-y-2">
+      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+        <input type="radio" name="bank" value="BCA">
+        <img src="/static/img/bank/bca.png" class="h-6">
+        BCA
+      </label>
+
+      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+        <input type="radio" name="bank" value="BNI">
+        <img src="/static/img/bank/bni.png" class="h-6">
+        BNI
+      </label>
+
+      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+        <input type="radio" name="bank" value="BRI">
+        <img src="/static/img/bank/bri.png" class="h-6">
+        BRI
+      </label>
+
+      <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer">
+        <input type="radio" name="bank" value="MANDIRI">
+        <img src="/static/img/bank/mandiri.png" class="h-6">
+        Mandiri
+      </label>
+    </div>
+  </div>
+</div>

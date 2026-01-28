@@ -1,0 +1,195 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "partials/pesan.html" %}
+
+<h1 class="text-2xl font-bold mb-6">🛒 Keranjang Belanja</h1>
+
+{% if items %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- ================= LIST ITEM ================= -->
+  <div class="lg:col-span-2 space-y-4">
+
+    <!-- PILIH SEMUA -->
+    <div class="bg-white rounded-xl shadow p-4 flex items-center gap-3">
+      <input type="checkbox" id="check-all" class="w-4 h-4">
+      <span class="font-semibold">Pilih Semua</span>
+    </div>
+
+    {% for item in items %}
+    <div class="bg-white rounded-xl shadow p-4 flex gap-4 items-center">
+
+      <!-- ✅ CHECKBOX (ID CART ITEM) -->
+      <input type="checkbox"
+             class="item-checkbox w-4 h-4"
+             data-id="{{ item.id }}"
+             data-harga="{{ item.harga_satuan }}">
+
+      <!-- GAMBAR -->
+      {% if item.gambar %}
+        <img src="{{ url_for('static', filename='uploads/produk/' ~ item.gambar) }}"
+             class="w-20 h-20 object-cover rounded">
+      {% else %}
+        <div class="w-20 h-20 bg-gray-200 flex items-center justify-center rounded text-xs text-gray-500">
+          No Image
+        </div>
+      {% endif %}
+
+      <!-- INFO -->
+      <div class="flex-1">
+        <h3 class="font-semibold">{{ item.nama_produk }}</h3>
+        <p class="text-sm text-gray-600">
+          Rp {{ "{:,}".format(item.harga_satuan) }}
+        </p>
+
+        <!-- JUMLAH -->
+        <div class="flex items-center gap-2 mt-2">
+          <button type="button"
+                  class="decrement px-3 py-1 bg-gray-200 rounded">−</button>
+
+          <span class="jumlah font-semibold w-6 text-center">
+            {{ item.jumlah }}
+          </span>
+
+          <button type="button"
+                  class="increment px-3 py-1 bg-emerald-500 text-white rounded">+</button>
+        </div>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="font-semibold subtotal-item">
+        Rp {{ "{:,}".format(item.harga_satuan * item.jumlah) }}
+      </div>
+
+
+      <!-- HAPUS -->
+      <form method="POST" action="{{ url_for('cart.hapus_item') }}">
+        <input type="hidden" name="id_produk" value="{{ item.id_produk }}">
+        <button class="w-8 h-8 bg-rose-500 text-white rounded-full">✕</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ================= RINGKASAN ================= -->
+  <div>
+    <div class="bg-white rounded-xl shadow p-6 space-y-4">
+      <h2 class="font-semibold text-lg">Ringkasan</h2>
+
+      <div class="flex justify-between">
+        <span>Total Item</span>
+        <span id="totalItem">0</span>
+      </div>
+
+      <div class="flex justify-between font-bold text-lg">
+        <span>Subtotal</span>
+        <span id="totalHarga">Rp 0</span>
+      </div>
+
+      <!-- ✅ FORM CHECKOUT -->
+      <form method="POST"
+            action="{{ url_for('checkout.checkout') }}"
+            id="checkoutForm">
+
+        <!-- ID CART ITEM TERPILIH -->
+        <input type="hidden" name="selected_items" id="selectedItems">
+
+        <button type="submit"
+          class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">
+          Checkout
+        </button>
+      </form>
+
+      <a href="{{ url_for('produk.daftar_produk') }}"
+         class="block text-center py-3 bg-gray-300 rounded-xl">
+        ← Kembali Belanja
+      </a>
+    </div>
+  </div>
+
+</div>
+{% else %}
+  {% include "partials/cart/empty.html" %}
+{% endif %}
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+function updateRingkasan() {
+  let totalItem = 0;
+  let totalHarga = 0;
+  let selected = [];
+
+  document.querySelectorAll(".item-checkbox").forEach(cb => {
+    const card = cb.closest(".bg-white");
+    const jumlah = parseInt(card.querySelector(".jumlah").innerText);
+    const harga = parseInt(cb.dataset.harga);
+    const idCartItem = cb.dataset.id;
+
+    if (cb.checked) {
+      totalItem += jumlah;
+      totalHarga += harga * jumlah;
+      selected.push(idCartItem);
+    }
+  });
+
+  document.getElementById("totalItem").innerText = totalItem;
+  document.getElementById("totalHarga").innerText =
+    "Rp " + totalHarga.toLocaleString("id-ID");
+
+  document.getElementById("selectedItems").value = selected.join(",");
+}
+
+/* PILIH SEMUA */
+document.getElementById("check-all")?.addEventListener("change", e => {
+  document.querySelectorAll(".item-checkbox").forEach(cb => {
+    cb.checked = e.target.checked;
+  });
+  updateRingkasan();
+});
+
+/* PER ITEM */
+document.querySelectorAll(".item-checkbox").forEach(cb => {
+  cb.addEventListener("change", updateRingkasan);
+});
+
+/* + / - AUTO CHECK + UPDATE JUMLAH KE DB */
+document.querySelectorAll(".increment, .decrement").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const card = btn.closest(".bg-white");
+    const span = card.querySelector(".jumlah");
+    const checkbox = card.querySelector(".item-checkbox");
+    const hargaSatuan = parseInt(checkbox.dataset.harga);
+    const idProduk = card.querySelector("form input[name='id_produk']").value;
+
+    let jumlah = parseInt(span.innerText);
+
+    if (btn.classList.contains("increment")) jumlah++;
+    if (btn.classList.contains("decrement") && jumlah > 1) jumlah--;
+
+    span.innerText = jumlah;
+
+    // update subtotal per item
+    const subtotalEl = card.querySelector(".subtotal-item");
+    subtotalEl.innerText = "Rp " + (hargaSatuan * jumlah).toLocaleString("id-ID");
+
+    checkbox.checked = true;
+    updateRingkasan();
+
+    // KIRIM KE SERVER supaya tersimpan
+    await fetch("{{ url_for('cart.ubah_jumlah_item') }}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        id_produk: idProduk,
+        jumlah: jumlah
+      })
+    });
+  });
+});
+
+
+updateRingkasan();
+</script>
+{% endblock %}
